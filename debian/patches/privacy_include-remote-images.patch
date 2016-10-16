@@ -1,0 +1,42 @@
+Description: Include remote images to avoid privacy leak on reading documentation.
+Author: Ximin Luo <infinity0@debian.org>
+Forwarded: not-needed
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/motion_guide.html
++++ b/motion_guide.html
+@@ -2614,14 +2614,14 @@
+ <p></p>
+ Normal picture. Notice the street is visible through the hedge.
+ <p></p>
+-<img alt="normal.jpg" src="http://www.lavrsen.dk/twiki/pub/Motion/ConfigOptionMaskFile/normal.jpg" />
++<img alt="normal.jpg" src="images/ConfigOptionMaskFile/normal.jpg" />
+ <p></p>
+ Mask file (converted to png format so it can be shown by your web browser)
+ <p></p>
+ <table style="border-width:1px;" cellspacing="0" cellpadding="0" border="1">
+  <tr >
+    <td bgcolor="#ffffff" valign="top" style="vertical-align:top;" >
+-     <img alt="mask1.png" src="http://www.lavrsen.dk/twiki/pub/Motion/ConfigOptionMaskFile/mask1.png" />      
++     <img alt="mask1.png" src="images/ConfigOptionMaskFile/mask1.png" />      
+    </td>
+  </tr>
+ </table>
+@@ -3046,7 +3046,7 @@
+ <p></p>
+ Motion can output different types of pictures.  The normal picture is indicated below.
+ <p></p>
+-<img alt="outputnormal1.jpg" src="http://www.lavrsen.dk/twiki/pub/Motion/TuningMotion/outputnormal1.jpg" />
++<img alt="outputnormal1.jpg" src="images/TuningMotion/outputnormal1.jpg" />
+ <p></p>
+ The motion type picture or also referred to as a debug picture is shown 
+ below.  Note that the largest area is blue and only this is counted as Motion.
+@@ -3055,7 +3055,7 @@
+ but a mathematical calculation of the past images. This enlarges real Motion and ensures that it is not easy to 
+ sneak in slowly.
+ <p></p>
+-<img alt="outputmotion1.jpg" src="http://www.lavrsen.dk/twiki/pub/Motion/TuningMotion/outputmotion1.jpg" />
++<img alt="outputmotion1.jpg" src="images/TuningMotion/outputmotion1.jpg" />
+ <p></p>
+ <p></p>
+ 
