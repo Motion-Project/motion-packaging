@@ -15,8 +15,6 @@ override_dh_auto_configure:
 	  --with-mysql-lib=$(LIBDIR_MULTIARCH) \
 	  --with-pgsql-lib=$(LIBDIR_MULTIARCH) \
 	  --without-optimizecpu
-	# stop #795002 from recurring
-	grep -q 'HAVE_FFMPEG 1' config.h
 
 override_dh_auto_install:
 	dh_auto_install

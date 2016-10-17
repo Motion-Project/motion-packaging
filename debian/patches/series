@@ -1,7 +1,0 @@
-0000-line-endings.patch
-0001-fix-under-escaping-in-manpage.patch
-privacy_include-remote-images.patch
-change-paths_use-sysconfdir-subdir.patch
-change-paths_set-debian-paths.patch
-fix-build_debian-kfreebsd-new-libs.patch
-fix-spelling-grammar.patch
