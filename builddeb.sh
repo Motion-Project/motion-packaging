@@ -27,43 +27,45 @@ TARNAME=""
 TEMPDIR=""
 DEBDATE="$(date +'%a, %d %b %Y %H:%k:%S %z')"
 MISSINGPKG=""
-
+DISTO=$(lsb_release -is)
+DISTROVERSION=$(lsb_release -is)
+DISTRONAME=$(lsb_release -cs)
 
 ##############################################################################################
 #  0.  Validate distribution, user parameters and packages
 ##############################################################################################
 
-if [ $(lsb_release -is) != "Ubuntu" ] && 
-   [ $(lsb_release -is) != "Debian" ] && 
-   [ $(lsb_release -is) != "Raspbian" ] ; then
+if [ $DISTO != "Ubuntu" ] &&
+   [ $DISTO != "Debian" ] &&
+   [ $DISTO != "Raspbian" ] ; then
   echo "This script is only functional for Debian, Ubuntu and Raspbian"
   exit 1
 fi
 
 if [ -z "$DEBUSERNAME" ] || [ -z "$DEBUSEREMAIL" ] || [ -z "$GITBRANCH" ]; then
-  echo 
+  echo
   echo "Usage:  builddeb.sh name email <optional branch>"
   echo "Name:   Name to use for deb package must not include spaces"
   echo "Email:  Email address to use for deb package"
   echo "Branch: The git branch name of Motion to build (If none specified, uses master)"
-  echo 
-fi 
+  echo
+fi
 
-if [ -z "$DEBUSERNAME" ]; then 
+if [ -z "$DEBUSERNAME" ]; then
   DEBUSERNAME="AdhocBuild"
 fi
 
-if [ -z "$DEBUSEREMAIL" ]; then 
+if [ -z "$DEBUSEREMAIL" ]; then
   DEBUSEREMAIL="AdhocBuild@nowhere.com"
 fi
 
-if [ -z "$GITBRANCH" ]; then 
+if [ -z "$GITBRANCH" ]; then
   GITBRANCH="master"
 fi
 
-echo 
+echo
 echo "Using Username: $DEBUSERNAME , User Email: $DEBUSEREMAIL , Git Branch: $GITBRANCH "
-echo 
+echo
 sleep 3
 
 #########################################################################################
@@ -75,15 +77,15 @@ if !( dpkg-query -W -f'${Status}' "autoconf" 2>/dev/null | grep -q "ok installed
 if !( dpkg-query -W -f'${Status}' "automake" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" automake"; fi
 if !( dpkg-query -W -f'${Status}' "libtool" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libtool"; fi
 if !( dpkg-query -W -f'${Status}' "libavcodec-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libavcodec-dev" ; fi
-if !( dpkg-query -W -f'${Status}' "libavformat-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libavformat-dev"; fi 
-if !( dpkg-query -W -f'${Status}' "libswscale-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libswscale-dev"; fi 
+if !( dpkg-query -W -f'${Status}' "libavformat-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libavformat-dev"; fi
+if !( dpkg-query -W -f'${Status}' "libswscale-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libswscale-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libjpeg-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libjpeg-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libpq-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libpq-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libsqlite3-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libsqlite3-dev"; fi
 if !( dpkg-query -W -f'${Status}' "dpkg-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" dpkg-dev"; fi
 if !( dpkg-query -W -f'${Status}' "debhelper" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" debhelper"; fi
-if !( dpkg-query -W -f'${Status}' "dh-autoreconf" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" dh-autoreconf"; fi 
+if !( dpkg-query -W -f'${Status}' "dh-autoreconf" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" dh-autoreconf"; fi
 if !( dpkg-query -W -f'${Status}' "zlib1g-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" zlib1g-dev"; fi
 if [ "$MISSINGPKG" = "" ]; then
   echo "All packages installed"
@@ -108,7 +110,7 @@ fi
     git clone https://github.com/Motion-Project/motion.git
   fi
 
-  cd $TEMPDIR/motion  
+  cd $TEMPDIR/motion
   if ! git checkout $GITBRANCH ; then
     echo Unknown branch
     rm -rf $TEMPDIR
@@ -116,7 +118,7 @@ fi
   fi
 
   cd $BASEDIR
-  if [ "$DIRNAME" = "motion-packaging" ] && [ -d "debian" ]; then 
+  if [ "$DIRNAME" = "motion-packaging" ] && [ -d "debian" ]; then
     mkdir $TEMPDIR/motion-packaging
     cp -R $BASEDIR $TEMPDIR
   else
@@ -154,28 +156,28 @@ fi
 
   cd $TEMPDIR/motion-packaging
 
-  if [ "$(lsb_release -is)" = "Ubuntu" ]; then
-    if [ "$(lsb_release -rs)" = "14.04" ]; then
+  if [ "$DISTO" = "Ubuntu" ]; then
+    if [ "$DISTROVERSION" = "14.04" ]; then
       git checkout master
     else
       git checkout master
     fi
-  elif [ "$(lsb_release -is)" = "Debian" ]; then
-   MAJOR=`echo $(lsb_release -rs) | cut -d. -f1` 
+  elif [ "$DISTO" = "Debian" ]; then
+   MAJOR=`echo $DISTROVERSION | cut -d. -f1`
    if [ "$MAJOR" = "7" ]; then
       git checkout master
     else
       git checkout master
     fi
-  elif [ "$(lsb_release -is)" = "Raspbian" ]; then
-   MAJOR=`echo $(lsb_release -rs) | cut -d. -f1` 
+  elif [ "$DISTO" = "Raspbian" ]; then
+   MAJOR=`echo $DISTROVERSION | cut -d. -f1`
    if [ "$MAJOR" = "7" ]; then
       git checkout master
     else
       git checkout master
     fi
   else
-    echo "Unsupported Distribution: $(lsb_release -is)"
+    echo "Unsupported Distribution: $DISTO"
     rm -rf $TEMPDIR
     exit 1
   fi
@@ -185,7 +187,7 @@ fi
 #  4a.  Update the packaging changelog
 #########################################################################################
   cd $TEMPDIR/motion
-  echo "motion ($VERSION-1) unstable; urgency=medium\n\n  * See changelog in source\n\n -- $DEBUSERNAME <$DEBUSEREMAIL>  $DEBDATE\n" >./debian/changelog
+  echo "motion ($VERSION-1) $DISTRONAME; urgency=medium\n\n  * See changelog in source\n\n -- $DEBUSERNAME <$DEBUSEREMAIL>  $DEBDATE\n" >./debian/changelog
 
 #########################################################################################
 #  6.  Call the packager application (dpkg-buildpackage) output result to a buildlog file.
@@ -195,20 +197,21 @@ fi
     rm -rf $TEMPDIR
     exit 1
   fi
+  echo "Building package...."
   dpkg-buildpackage -us -uc >$TEMPDIR/motion_$VERSION-buildlog.txt 2>&1
 ##############################################################################################
 #  7.  Move resulting files to the parent of the original source code directory and clean up
 ##############################################################################################
-  cd $BASEDIR  
+  cd $BASEDIR
   mv $TEMPDIR/motion_$VERSION* $BASEDIR
   rm -rf $TEMPDIR
 
 #########################################################################################
   if [ $? -eq 0 ]; then
-    echo "The deb packages and build logs have been created and placed into $BASEDIR" 
+    echo "The deb packages and build logs have been created and placed into $BASEDIR"
     exit 0
   else
-    echo "Build Error.  Check build log in directory $BASEDIR" 
+    echo "Build Error.  Check build log in directory $BASEDIR"
     exit 1
   fi
 ##############################################################################################
