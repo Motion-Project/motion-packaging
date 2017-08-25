@@ -28,7 +28,8 @@ TEMPDIR=""
 DEBDATE="$(date +'%a, %d %b %Y %H:%M:%S %z')"
 MISSINGPKG=""
 DISTO=$(lsb_release -is)
-DISTROVERSION=$(lsb_release -is)
+DISTROVERSION=$(lsb_release -rs)
+DISTROMAJOR=`echo $DISTROVERSION | cut -d. -f1`
 DISTRONAME=$(lsb_release -cs)
 
 ##############################################################################################
@@ -81,12 +82,20 @@ if !( dpkg-query -W -f'${Status}' "libavformat-dev" 2>/dev/null | grep -q "ok in
 if !( dpkg-query -W -f'${Status}' "libswscale-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libswscale-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libjpeg-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libjpeg-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libpq-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libpq-dev"; fi
-if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libsqlite3-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libsqlite3-dev"; fi
 if !( dpkg-query -W -f'${Status}' "dpkg-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" dpkg-dev"; fi
 if !( dpkg-query -W -f'${Status}' "debhelper" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" debhelper"; fi
 if !( dpkg-query -W -f'${Status}' "dh-autoreconf" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" dh-autoreconf"; fi
 if !( dpkg-query -W -f'${Status}' "zlib1g-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" zlib1g-dev"; fi
+
+if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "17" ]; then 
+  if !( dpkg-query -W -f'${Status}' "default-libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" default-libmysqlclient-dev"; fi
+elif [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "9" ]; then 
+  if !( dpkg-query -W -f'${Status}' "default-libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" default-libmysqlclient-dev"; fi
+else
+  if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
+fi
+
 if [ "$MISSINGPKG" = "" ]; then
   echo "All packages installed"
 else
@@ -157,24 +166,22 @@ fi
   cd $TEMPDIR/motion-packaging
 
   if [ "$DISTO" = "Ubuntu" ]; then
-    if [ "$DISTROVERSION" = "14.04" ]; then
+    if [ "$DISTROMAJOR" -ge "17" ]; then
       git checkout master
     else
-      git checkout master
+      git checkout 16.04
     fi
   elif [ "$DISTO" = "Debian" ]; then
-   MAJOR=`echo $DISTROVERSION | cut -d. -f1`
-   if [ "$MAJOR" = "7" ]; then
+   if [ "$DISTROMAJOR" -ge "9" ]; then
       git checkout master
     else
-      git checkout master
+      git checkout 16.04
     fi
   elif [ "$DISTO" = "Raspbian" ]; then
-   MAJOR=`echo $DISTROVERSION | cut -d. -f1`
-   if [ "$MAJOR" = "7" ]; then
+   if [ "$DISTROMAJOR" -ge "9" ]; then
       git checkout master
     else
-      git checkout master
+      git checkout 16.04
     fi
   else
     echo "Unsupported Distribution: $DISTO"
