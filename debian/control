@@ -6,6 +6,7 @@ Homepage: https://motion-project.github.io/
 Build-Depends: debhelper (>= 9), dpkg-dev (>= 1.16), dh-autoreconf,
  libavcodec-dev,
  libavformat-dev,
+ libavdevice-dev,
  libjpeg-dev,
  default-libmysqlclient-dev,
  libpq-dev,
@@ -18,7 +19,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
 Recommends: ffmpeg
 Suggests: mysql-client, postgresql-client
-Description: V4L capture program supporting motion detection
+Description: V4L2 capture program supporting motion detection
  Motion is a program that monitors the video signal from
  one or more cameras and is able to detect if a significant
  part of the picture has changed. Or in other words, it can
