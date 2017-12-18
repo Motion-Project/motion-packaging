@@ -20,6 +20,7 @@
 DEBUSERNAME=$1
 DEBUSEREMAIL=$2
 GITBRANCH=$3
+INSTALLPKG=$4
 BASEDIR=$(pwd)
 DIRNAME=${PWD##*/}
 VERSION=""
@@ -45,11 +46,16 @@ fi
 
 if [ -z "$DEBUSERNAME" ] || [ -z "$DEBUSEREMAIL" ] || [ -z "$GITBRANCH" ]; then
   echo
-  echo "Usage:  builddeb.sh name email <optional branch>"
-  echo "Name:   Name to use for deb package must not include spaces"
-  echo "Email:  Email address to use for deb package"
-  echo "Branch: The git branch name of Motion to build (If none specified, uses master)"
+  echo "Usage:    builddeb.sh name email <optional branch>"
+  echo "Name:     Name to use for deb package must not include spaces"
+  echo "Email:    Email address to use for deb package"
+  echo "Branch:   The git branch name of Motion to build (If none specified, uses master)"
+  echo "Install:  Install required packages"
   echo
+fi
+
+if [ -z "$INSTALLPKG" ]; then
+  INSTALLPKG="N"
 fi
 
 if [ -z "$DEBUSERNAME" ]; then
@@ -100,8 +106,13 @@ fi
 if [ "$MISSINGPKG" = "" ]; then
   echo "All packages installed"
 else
-  echo "The following packages need to be installed with the following command: sudo apt-get install $MISSINGPKG"
-  exit 1
+  if [ "$INSTALLPKG" = "Y" ]; then
+    sudo apt-get update
+    sudo apt-get install -y $MISSINGPKG
+  else
+    echo "The following packages need to be installed with the following command: sudo apt-get install $MISSINGPKG"
+    exit 1
+  fi
 fi
 
 #########################################################################################
@@ -143,7 +154,7 @@ fi
 #########################################################################################
   rm -f config.status config.log config.cache Makefile motion.service motion.init-Debian motion.init-FreeBSD.sh
   rm -f camera1-dist.conf camera2-dist.conf camera3-dist.conf camera4-dist.conf motion-dist.conf motion-help.conf motion.spec
-  rm -rf autom4te.cache config.h .gitignore .travis.yml
+  rm -rf autom4te.cache config.h 
   rm -f *.gz *.o *.m4 *.*~
 
 #########################################################################################
@@ -152,7 +163,7 @@ fi
   VERSION=$(./version.sh)
   TARNAME=motion_$VERSION.orig.tar.gz
 
-  tar --exclude=.git -zcf $TARNAME *
+  tar --exclude=".*" -zcf $TARNAME *
 
   mv $TARNAME $TEMPDIR/$TARNAME
 
@@ -213,7 +224,11 @@ fi
   cd $BASEDIR
   mv $TEMPDIR/motion_$VERSION* $BASEDIR
   rm -rf $TEMPDIR
-
+  for FILE in $BASEDIR/motion_$VERSION*; do
+    NEWNAME="_${FILE##*/}"
+    NEWNAME=$DISTRONAME$NEWNAME
+    mv "$FILE" "$NEWNAME"
+  done
 #########################################################################################
   if [ $? -eq 0 ]; then
     echo "The deb packages and build logs have been created and placed into $BASEDIR"
