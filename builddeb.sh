@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ##############################################################################################
-#  Build Script for Motion application.  
+#  Build Script for Motion application.
 #  This script is currently only functional for Debian based systems.
 #  The following is the overall flow:
 #  0.  Validate distribution, user parameters and packages
@@ -21,6 +21,7 @@ DEBUSERNAME=$1
 DEBUSEREMAIL=$2
 GITBRANCH=$3
 INSTALLPKG=$4
+ARCH=$5
 BASEDIR=$(pwd)
 DIRNAME=${PWD##*/}
 VERSION=""
@@ -37,6 +38,11 @@ DISTRONAME=$(lsb_release -cs)
 #  0.  Validate distribution, user parameters and packages
 ##############################################################################################
 
+if [ -z "$DISTO" ]; then
+  echo "This script is only functional for Debian, Ubuntu and Raspbian"
+  exit 1
+fi
+
 if [ $DISTO != "Ubuntu" ] &&
    [ $DISTO != "Debian" ] &&
    [ $DISTO != "Raspbian" ] ; then
@@ -51,6 +57,7 @@ if [ -z "$DEBUSERNAME" ] || [ -z "$DEBUSEREMAIL" ] || [ -z "$GITBRANCH" ]; then
   echo "Email:    Email address to use for deb package"
   echo "Branch:   The git branch name of Motion to build (If none specified, uses master)"
   echo "Install:  Install required packages"
+  echo "Arch:     Architecture"
   echo
 fi
 
@@ -70,14 +77,25 @@ if [ -z "$GITBRANCH" ]; then
   GITBRANCH="master"
 fi
 
+if [ -z "$ARCH" ]; then
+  ARCH="UNKN"
+fi
+
+PARMS="Using Username: $DEBUSERNAME"
+PARMS=$PARMS", User Email: $DEBUSEREMAIL"
+PARMS=$PARMS", Git Branch: $GITBRANCH"
+PARMS=$PARMS", Install Pkgs: $INSTALLPKG"
+PARMS=$PARMS", Arch: $ARCH"
+
 echo
-echo "Using Username: $DEBUSERNAME , User Email: $DEBUSEREMAIL , Git Branch: $GITBRANCH "
+echo $PARMS
 echo
 sleep 3
 
 #########################################################################################
 # Find any packages missing.  (not the best method but functional)
 #########################################################################################
+if !( dpkg-query -W -f'${Status}' "build-essential" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" build-essential"; fi
 if !( dpkg-query -W -f'${Status}' "git" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" git"; fi
 if !( dpkg-query -W -f'${Status}' "pkg-config" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" pkg-config"; fi
 if !( dpkg-query -W -f'${Status}' "autoconf" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" autoconf"; fi
@@ -94,10 +112,11 @@ if !( dpkg-query -W -f'${Status}' "dpkg-dev" 2>/dev/null | grep -q "ok installed
 if !( dpkg-query -W -f'${Status}' "debhelper" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" debhelper"; fi
 if !( dpkg-query -W -f'${Status}' "dh-autoreconf" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" dh-autoreconf"; fi
 if !( dpkg-query -W -f'${Status}' "zlib1g-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" zlib1g-dev"; fi
+if !( dpkg-query -W -f'${Status}' "libwebp-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libwebp-dev"; fi
 
-if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "17" ]; then 
+if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "17" ]; then
   if !( dpkg-query -W -f'${Status}' "default-libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" default-libmysqlclient-dev"; fi
-elif [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "9" ]; then 
+elif [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "9" ]; then
   if !( dpkg-query -W -f'${Status}' "default-libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" default-libmysqlclient-dev"; fi
 else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
@@ -154,7 +173,7 @@ fi
 #########################################################################################
   rm -f config.status config.log config.cache Makefile motion.service motion.init-Debian motion.init-FreeBSD.sh
   rm -f camera1-dist.conf camera2-dist.conf camera3-dist.conf camera4-dist.conf motion-dist.conf motion-help.conf motion.spec
-  rm -rf autom4te.cache config.h 
+  rm -rf autom4te.cache config.h
   rm -f *.gz *.o *.m4 *.*~
 
 #########################################################################################
@@ -217,7 +236,9 @@ fi
     exit 1
   fi
   echo "Building package...."
-  dpkg-buildpackage -us -uc >$TEMPDIR/motion_$VERSION-buildlog.txt 2>&1
+
+  dpkg-buildpackage -us -uc -j4 >$TEMPDIR/motion_$VERSION-buildlog-$ARCH.txt 2>&1
+
 ##############################################################################################
 #  7.  Move resulting files to the parent of the original source code directory and clean up
 ##############################################################################################
@@ -226,7 +247,11 @@ fi
   rm -rf $TEMPDIR
   for FILE in $BASEDIR/motion_$VERSION*; do
     NEWNAME="_${FILE##*/}"
-    NEWNAME=$DISTRONAME$NEWNAME
+    if [ "$DISTO" = "Raspbian" ] ; then
+      NEWNAME=pi_$DISTRONAME$NEWNAME
+    else
+      NEWNAME=$DISTRONAME$NEWNAME
+    fi
     mv "$FILE" "$NEWNAME"
   done
 #########################################################################################
