@@ -27,7 +27,7 @@ DIRNAME=${PWD##*/}
 VERSION=""
 TARNAME=""
 TEMPDIR=""
-DEBDATE="$(date +'%a, %d %b %Y %H:%M:%S %z')"
+DEBDATE="$(date -R)"
 MISSINGPKG=""
 DISTO=$(lsb_release -is)
 DISTROVERSION=$(lsb_release -rs)
@@ -225,7 +225,7 @@ fi
 #  4a.  Update the packaging changelog
 #########################################################################################
   cd $TEMPDIR/motion
-  echo "motion ($VERSION-1) $DISTRONAME; urgency=medium\n\n  * See changelog in source\n\n -- $DEBUSERNAME <$DEBUSEREMAIL>  $DEBDATE\n" >./debian/changelog
+  printf "motion ($VERSION-1) $DISTRONAME; urgency=medium\n\n  * See changelog in source\n\n -- $DEBUSERNAME <$DEBUSEREMAIL>  $DEBDATE\n" >./debian/changelog
 
 #########################################################################################
 #  6.  Call the packager application (dpkg-buildpackage) output result to a buildlog file.
