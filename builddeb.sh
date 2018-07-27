@@ -27,7 +27,6 @@ DIRNAME=${PWD##*/}
 VERSION=""
 TARNAME=""
 TEMPDIR=""
-#DEBDATE="$(date -R +'%a, %d %b %Y %H:%M:%S %z')"
 DEBDATE="$(date -R)"
 MISSINGPKG=""
 DISTO=$(lsb_release -is)
