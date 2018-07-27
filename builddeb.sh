@@ -114,6 +114,7 @@ if !( dpkg-query -W -f'${Status}' "debhelper" 2>/dev/null | grep -q "ok installe
 if !( dpkg-query -W -f'${Status}' "dh-autoreconf" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" dh-autoreconf"; fi
 if !( dpkg-query -W -f'${Status}' "zlib1g-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" zlib1g-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libwebp-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libwebp-dev"; fi
+if !( dpkg-query -W -f'${Status}' "libmicrohttpd-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmicrohttpd-dev"; fi
 
 if [ "$DISTO" = "Debian" ]; then
   if !( dpkg-query -W -f'${Status}' "default-libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" default-libmysqlclient-dev"; fi
@@ -206,7 +207,7 @@ fi
       git checkout 16.04
     fi
   elif [ "$DISTO" = "Debian" ]; then
-   if [ "$DISTROMAJOR" -ge "9" ]; then
+   if [ "$DISTROMAJOR" = "testing" ]; then
       git checkout master
     else
       git checkout 16.04
