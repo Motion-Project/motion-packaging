@@ -78,7 +78,7 @@ if [ -z "$GITBRANCH" ]; then
 fi
 
 if [ -z "$ARCH" ]; then
-  ARCH="UNKN"
+  ARCH=$(arch)
 fi
 
 PARMS="Using Username: $DEBUSERNAME"
