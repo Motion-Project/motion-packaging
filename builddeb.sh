@@ -181,7 +181,7 @@ fi
 #########################################################################################
 #  3.  Tar up the code and move up to directory parent.
 #########################################################################################
-  VERSION=$(./version.sh)
+  VERSION=$(scripts/version.sh)
   TARNAME=motion_$VERSION.orig.tar.gz
 
   tar --exclude=".*" -zcf $TARNAME *
