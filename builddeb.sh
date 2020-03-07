@@ -181,7 +181,14 @@ fi
 #########################################################################################
 #  3.  Tar up the code and move up to directory parent.
 #########################################################################################
-  VERSION=$(scripts/version.sh)
+  # Version prior to 4.3 use ./version, 4.3+ use scripts/version.sh
+  if [ -x ./version.sh ]
+  then
+    VERSION=$(./version.sh)
+  else
+    VERSION=$(scripts/version.sh)
+  fi
+  echo "Version: $VERSION"
   TARNAME=motion_$VERSION.orig.tar.gz
 
   tar --exclude=".*" -zcf $TARNAME *
