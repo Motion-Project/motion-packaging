@@ -27,7 +27,7 @@ DIRNAME=${PWD##*/}
 VERSION=""
 TARNAME=""
 TEMPDIR=""
-DEBDATE="$(date +'%a, %d %b %Y %H:%M:%S %z')"
+DEBDATE="$(date -R)"
 MISSINGPKG=""
 DISTO=$(lsb_release -is)
 DISTROVERSION=$(lsb_release -rs)
@@ -78,7 +78,7 @@ if [ -z "$GITBRANCH" ]; then
 fi
 
 if [ -z "$ARCH" ]; then
-  ARCH="UNKN"
+  ARCH=$(arch)
 fi
 
 PARMS="Using Username: $DEBUSERNAME"
@@ -113,11 +113,13 @@ if !( dpkg-query -W -f'${Status}' "debhelper" 2>/dev/null | grep -q "ok installe
 if !( dpkg-query -W -f'${Status}' "dh-autoreconf" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" dh-autoreconf"; fi
 if !( dpkg-query -W -f'${Status}' "zlib1g-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" zlib1g-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libwebp-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libwebp-dev"; fi
+if !( dpkg-query -W -f'${Status}' "libmicrohttpd-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmicrohttpd-dev"; fi
+if !( dpkg-query -W -f'${Status}' "gettext" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" gettext"; fi
 
 if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "17" ]; then
-  if !( dpkg-query -W -f'${Status}' "default-libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" default-libmysqlclient-dev"; fi
+  if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
 elif [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "9" ]; then
-  if !( dpkg-query -W -f'${Status}' "default-libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" default-libmysqlclient-dev"; fi
+  if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
 else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
 fi
@@ -179,7 +181,14 @@ fi
 #########################################################################################
 #  3.  Tar up the code and move up to directory parent.
 #########################################################################################
-  VERSION=$(./version.sh)
+  # Version prior to 4.3 use ./version, 4.3+ use scripts/version.sh
+  if [ -x ./version.sh ]
+  then
+    VERSION=$(./version.sh)
+  else
+    VERSION=$(scripts/version.sh)
+  fi
+  echo "Version: $VERSION"
   TARNAME=motion_$VERSION.orig.tar.gz
 
   tar --exclude=".*" -zcf $TARNAME *
@@ -225,7 +234,7 @@ fi
 #  4a.  Update the packaging changelog
 #########################################################################################
   cd $TEMPDIR/motion
-  echo "motion ($VERSION-1) $DISTRONAME; urgency=medium\n\n  * See changelog in source\n\n -- $DEBUSERNAME <$DEBUSEREMAIL>  $DEBDATE\n" >./debian/changelog
+  printf "motion ($VERSION-1) $DISTRONAME; urgency=medium\n\n  * See changelog in source\n\n -- $DEBUSERNAME <$DEBUSEREMAIL>  $DEBDATE\n" >./debian/changelog
 
 #########################################################################################
 #  6.  Call the packager application (dpkg-buildpackage) output result to a buildlog file.
