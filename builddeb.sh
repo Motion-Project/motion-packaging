@@ -119,12 +119,12 @@ if !( dpkg-query -W -f'${Status}' "fakeroot" 2>/dev/null | grep -q "ok installed
 
 if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "20" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
-if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "17" ]; then
-  if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
-elif [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "9" ]; then
+elif [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "17" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
 elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
+elif [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "9" ]; then
+  if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
 else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
 fi
