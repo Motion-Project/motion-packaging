@@ -1,6 +1,7 @@
 [Unit]
 Description=Motion detection video capture daemon
 Documentation=man:motion(1)
+LogsDirectory=motion
 
 [Service]
 Type=simple
