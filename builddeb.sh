@@ -123,8 +123,10 @@ elif [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "17" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
 elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
-elif [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "9" ]; then
+elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "9" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
+elif [ $DISTO = "Raspbian" ] ; then
+  if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
 else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
 fi
@@ -165,7 +167,7 @@ fi
   fi
 
   cd $BASEDIR
-  if [ "$DIRNAME" = "motion-packaging" ] && [ -d "debian" ]; then
+  if [ "$DIRNAME" = "motion-packaging" ] && [ -d "debian01" ]; then
     mkdir $TEMPDIR/motion-packaging
     cp -R $BASEDIR $TEMPDIR
   else
@@ -180,15 +182,14 @@ fi
 #########################################################################################
   rm -f config.status config.log config.cache Makefile motion.service motion.init-Debian motion.init-FreeBSD.sh
   rm -f camera1-dist.conf camera2-dist.conf camera3-dist.conf camera4-dist.conf motion-dist.conf motion-help.conf motion.spec
-  rm -rf autom4te.cache config.h
+  rm -rf autom4te.cache config.h .github
   rm -f *.gz *.o *.m4 *.*~
 
 #########################################################################################
 #  3.  Tar up the code and move up to directory parent.
 #########################################################################################
   # Version prior to 4.3 use ./version, 4.3+ use scripts/version.sh
-  if [ -x ./version.sh ]
-  then
+  if [ -x ./version.sh ] ; then
     VERSION=$(./version.sh)
   else
     VERSION=$(scripts/version.sh)
@@ -203,39 +204,42 @@ fi
   cd ..
 
 #########################################################################################
-#  4.  Retrieve from git the package rules (usually debian)
+#  4.  Retrieve from git the package rules
 #########################################################################################
 
   cd $TEMPDIR/motion-packaging
 
   if [ "$DISTO" = "Ubuntu" ]; then
-    if [ "$DISTROMAJOR" -ge "20" ]; then
-      git checkout master
+    if [ "$DISTROMAJOR" -ge "22" ]; then
+      cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
+    elif [ "$DISTROMAJOR" -ge "20" ]; then
+      cp -rf $TEMPDIR/motion-packaging/debian03 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "17" ]; then
-      git checkout debian09
+      cp -rf $TEMPDIR/motion-packaging/debian02 $TEMPDIR/motion/debian
     else
-      git checkout 16.04
+      cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
     fi
   elif [ "$DISTO" = "Debian" ]; then
     if [ "$DISTROMAJOR" -ge "11" ]; then
-      git checkout master
+      cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
+    elif [ "$DISTROMAJOR" -ge "10" ]; then
+      cp -rf $TEMPDIR/motion-packaging/debian03 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "9" ]; then
-      git checkout debian09
+      cp -rf $TEMPDIR/motion-packaging/debian02 $TEMPDIR/motion/debian
     else
-      git checkout 16.04
+      cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
     fi
   elif [ "$DISTO" = "Raspbian" ]; then
    if [ "$DISTROMAJOR" -ge "9" ]; then
-      git checkout master
+      cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
     else
-      git checkout 16.04
+      cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
     fi
   else
     echo "Unsupported Distribution: $DISTO"
     rm -rf $TEMPDIR
     exit 1
   fi
-  mv $TEMPDIR/motion-packaging/debian $TEMPDIR/motion/debian
 
 #########################################################################################
 #  4a.  Update the packaging changelog
@@ -258,6 +262,12 @@ fi
 ##############################################################################################
 #  7.  Move resulting files to the parent of the original source code directory and clean up
 ##############################################################################################
+
+  CHK="N"
+  if ls $TEMPDIR/motion_$VERSION*.deb 1> /dev/null 2>&1; then
+    CHK="Y"
+  fi
+
   cd $BASEDIR
   mv $TEMPDIR/motion_$VERSION* $BASEDIR
   rm -rf $TEMPDIR
@@ -271,11 +281,13 @@ fi
     mv "$FILE" "$NEWNAME"
   done
 #########################################################################################
-  if [ $? -eq 0 ]; then
-    echo "The deb packages and build logs have been created and placed into $BASEDIR"
+  if [ $CHK = "Y" ]; then
+    echo "The deb packages and build logs have been created and"
+    echo "saved in $BASEDIR"
     exit 0
   else
-    echo "Build Error.  Check build log in directory $BASEDIR"
+    echo "Build Error.  Check build log "
+    echo "saved in $BASEDIR"
     exit 1
   fi
 ##############################################################################################

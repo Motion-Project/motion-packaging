@@ -1,0 +1,11 @@
+[Unit]
+Description=Motion detection video capture daemon
+Documentation=man:motion(1)
+
+[Service]
+Type=simple
+User=motion
+ExecStart=/usr/bin/motion
+
+[Install]
+WantedBy=multi-user.target
