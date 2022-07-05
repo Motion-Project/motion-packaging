@@ -26,6 +26,8 @@ User=motion
 UMask=002
 EnvironmentFile=-/etc/default/motion
 ExecStart=/usr/bin/motion
+ExecStartPre=!/bin/mkdir -p /var/log/motion
+ExecStartPre=!/bin/chown motion:adm /var/log/motion
 
 Type=simple
 # Set StandardError=journal to use journald to log messages from motion.
