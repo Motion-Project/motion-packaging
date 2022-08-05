@@ -115,7 +115,7 @@ if !( dpkg-query -W -f'${Status}' "zlib1g-dev" 2>/dev/null | grep -q "ok install
 if !( dpkg-query -W -f'${Status}' "libwebp-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libwebp-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libmicrohttpd-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmicrohttpd-dev"; fi
 if !( dpkg-query -W -f'${Status}' "gettext" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" gettext"; fi
-if !( dpkg-query -W -f'${Status}' "fakeroot" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" gettext"; fi
+if !( dpkg-query -W -f'${Status}' "fakeroot" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" fakeroot"; fi
 
 if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "20" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
