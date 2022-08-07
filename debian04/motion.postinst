@@ -16,6 +16,7 @@ add_user_if_missing() {
     if ! id -u motion > /dev/null 2>&1; then
         mkdir -m 02750 -p /var/lib/motion
         adduser --system --home /var/lib/motion \
+          --no-create-home \
           --disabled-password \
           --force-badname motion \
           --ingroup motion
