@@ -33,6 +33,7 @@ DISTO=$(lsb_release -is)
 DISTROVERSION=$(lsb_release -rs)
 DISTROMAJOR=`echo $DISTROVERSION | cut -d. -f1`
 DISTRONAME=$(lsb_release -cs)
+PKGARCH=$(dpkg --print-architecture)
 
 ##############################################################################################
 #  0.  Validate distribution, user parameters and packages
@@ -86,6 +87,7 @@ PARMS=$PARMS", User Email: $DEBUSEREMAIL"
 PARMS=$PARMS", Git Branch: $GITBRANCH"
 PARMS=$PARMS", Install Pkgs: $INSTALLPKG"
 PARMS=$PARMS", Arch: $ARCH"
+PARMS=$PARMS", PKGARCH: $PKGARCH"
 
 echo
 echo $PARMS
@@ -148,12 +150,10 @@ fi
 #########################################################################################
   TEMPDIR=$(mktemp -d /tmp/motion.XXXXXX)
 
-  if [ "$DIRNAME" = "motion" ] && [ -d "raspbian" ]; then
+  if [ -f "src/motion.c" ] ; then
+    echo "Using local version"
     mkdir $TEMPDIR/motion
-    mkdir $TEMPDIR/motion/raspicam
-    cp ./* $TEMPDIR/motion/
-    cp -R ./.git $TEMPDIR/motion/
-    cp ./raspicam/* $TEMPDIR/motion/raspicam/
+    cp -r $BASEDIR/* $TEMPDIR/motion/
   else
     cd $TEMPDIR
     git clone https://github.com/Motion-Project/motion.git
@@ -167,9 +167,10 @@ fi
   fi
 
   cd $BASEDIR
-  if [ "$DIRNAME" = "motion-packaging" ] && [ -d "debian01" ]; then
+  if [ -f "debian01/motion.postinst" ]; then
+    echo "Using local version"
     mkdir $TEMPDIR/motion-packaging
-    cp -R $BASEDIR $TEMPDIR
+    cp -r $BASEDIR/* $TEMPDIR/motion-packaging
   else
     cd $TEMPDIR
     git clone https://github.com/Motion-Project/motion-packaging.git
@@ -230,7 +231,9 @@ fi
       cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
     fi
   elif [ "$DISTO" = "Raspbian" ]; then
-   if [ "$DISTROMAJOR" -ge "9" ]; then
+    if [ "$DISTROMAJOR" -ge "11" ] || [ "$PKGARCH" = "arm64" ]; then
+      cp -rf $TEMPDIR/motion-packaging/debian05 $TEMPDIR/motion/debian
+    elif [ "$DISTROMAJOR" -ge "9" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
     else
       cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
