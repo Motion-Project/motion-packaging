@@ -210,7 +210,9 @@ fi
 
   cd $TEMPDIR/motion-packaging
 
-  if [ "$DISTO" = "Ubuntu" ]; then
+  if [ "$PKGARCH" = "arm64" ]; then
+    cp -rf $TEMPDIR/motion-packaging/debian05 $TEMPDIR/motion/debian
+  elif [ "$DISTO" = "Ubuntu" ]; then
     if [ "$DISTROMAJOR" -ge "22" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "20" ]; then
@@ -231,7 +233,7 @@ fi
       cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
     fi
   elif [ "$DISTO" = "Raspbian" ]; then
-    if [ "$DISTROMAJOR" -ge "11" ] || [ "$PKGARCH" = "arm64" ]; then
+    if [ "$DISTROMAJOR" -ge "11" ] ; then
       cp -rf $TEMPDIR/motion-packaging/debian05 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "9" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
