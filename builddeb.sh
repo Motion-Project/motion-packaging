@@ -185,6 +185,7 @@ fi
   rm -f camera1-dist.conf camera2-dist.conf camera3-dist.conf camera4-dist.conf motion-dist.conf motion-help.conf motion.spec
   rm -rf autom4te.cache config.h .github
   rm -f *.gz *.o *.m4 *.*~
+  git rm -rf .github
 
 #########################################################################################
 #  3.  Tar up the code and move up to directory parent.
