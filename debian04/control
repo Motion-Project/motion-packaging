@@ -3,9 +3,9 @@ Section: video
 Priority: optional
 Maintainer: Mr-Dave <MotionMrDave@gmail.com>
 Homepage: https://motion-project.github.io/
-Build-Depends: debhelper (>= 13),
- debhelper-compat (= 13),
- dpkg-dev (>= 1.16),
+Build-Depends: debhelper,
+ debhelper-compat,
+ dpkg-dev,
  libavcodec-dev,
  libavformat-dev,
  libavdevice-dev,
@@ -13,7 +13,7 @@ Build-Depends: debhelper (>= 13),
  libavutil-dev,
  libswscale-dev,
  libjpeg-dev,
- libmariadb-dev,
+ libmariadb-dev | libmariadbclient-dev | libmysqlclient-dev,
  libpq-dev,
  libsqlite3-dev,
  libmicrohttpd-dev,
@@ -23,7 +23,7 @@ Standards-Version: 4.5.0
 
 Package: motion
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base (>= 3.0-6), adduser
+Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base, adduser
 Recommends:
 Suggests:
 Description: Video camera capture program supporting motion detection
