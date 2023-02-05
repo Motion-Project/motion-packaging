@@ -210,10 +210,7 @@ fi
 #########################################################################################
 
   cd $TEMPDIR/motion-packaging
-
-  if [ "$PKGARCH" = "arm64" ]; then
-    cp -rf $TEMPDIR/motion-packaging/debian05 $TEMPDIR/motion/debian
-  elif [ "$DISTO" = "Ubuntu" ]; then
+  if [ "$DISTO" = "Ubuntu" ]; then
     if [ "$DISTROMAJOR" -ge "22" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "20" ]; then
