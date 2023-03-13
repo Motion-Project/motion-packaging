@@ -121,6 +121,7 @@ if !( dpkg-query -W -f'${Status}' "fakeroot" 2>/dev/null | grep -q "ok installed
 if !( dpkg-query -W -f'${Status}' "libasound2-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libasound2-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libpulse-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libpulse-dev"; fi
 if !( dpkg-query -W -f'${Status}' "libfftw3-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libfftw3-dev"; fi
+if !( dpkg-query -W -f'${Status}' "libopencv-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libopencv-dev"; fi
 
 if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "20" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
@@ -134,6 +135,10 @@ elif [ $DISTO = "Raspbian" ] ; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
 else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
+fi
+
+if [ $DISTO = "Raspbian" ] ; then
+  if !( dpkg-query -W -f'${Status}' "libcamera-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
 fi
 
 if [ "$MISSINGPKG" = "" ]; then
@@ -211,14 +216,12 @@ fi
 
   cd $TEMPDIR/motion-packaging
 
-  if [ "$PKGARCH" = "arm64" ]; then
-    cp -rf $TEMPDIR/motion-packaging/plus01 $TEMPDIR/motionplus/debian
-  elif [ "$DISTO" = "Ubuntu" ]; then
-    cp -rf $TEMPDIR/motion-packaging/plus01 $TEMPDIR/motionplus/debian
+  if [ "$DISTO" = "Ubuntu" ]; then
+    cp -rf $TEMPDIR/motion-packaging/plus02 $TEMPDIR/motionplus/debian
   elif [ "$DISTO" = "Debian" ]; then
-    cp -rf $TEMPDIR/motion-packaging/plus01 $TEMPDIR/motionplus/debian
+    cp -rf $TEMPDIR/motion-packaging/plus02 $TEMPDIR/motionplus/debian
   elif [ "$DISTO" = "Raspbian" ]; then
-    cp -rf $TEMPDIR/motion-packaging/plus01 $TEMPDIR/motionplus/debian
+    cp -rf $TEMPDIR/motion-packaging/plus03 $TEMPDIR/motionplus/debian
   else
     echo "Unsupported Distribution: $DISTO"
     rm -rf $TEMPDIR

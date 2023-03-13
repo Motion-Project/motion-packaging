@@ -1,0 +1,44 @@
+Source: motionplus
+Section: video
+Priority: optional
+Maintainer: Mr-Dave <MotionMrDave@gmail.com>
+Homepage: https://motion-project.github.io/
+Build-Depends: debhelper(>= 13),
+ debhelper-compat( = 13),
+ dpkg-dev(>= 1.16),
+ libavcodec-dev,
+ libavformat-dev,
+ libavdevice-dev,
+ libavfilter-dev,
+ libavutil-dev,
+ libswscale-dev,
+ libjpeg-dev,
+ libmariadb-dev | libmariadbclient-dev | libmysqlclient-dev,
+ libpq-dev,
+ libsqlite3-dev,
+ libmicrohttpd-dev,
+ gettext,
+ libpulse-dev,
+ libasound2-dev,
+ libfftw3-dev,
+ zlib1g-dev,
+ libopencv-dev,
+Standards-Version: 4.5.0
+
+Package: motionplus
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base, adduser
+Recommends:
+Suggests:
+Description: Motionplus is an enhance version of the Motion software that provides a simple
+ security camera solution.  Features include
+ .
+ Traditional motion detection
+ Secondary detection via DNN, Cascades, HOG from OpenCv.
+ Region of interest pictures for training models.
+ Web interface with https and intruder lockouts
+ User customizable web interface.
+ Recording of sound from IP camera
+ Sound frequency detection and actions for things like smoke/water alarms
+ Direct support for libcamera sources 
+ And much more
