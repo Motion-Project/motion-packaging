@@ -44,9 +44,9 @@ if [ -z "$DISTO" ]; then
   exit 1
 fi
 
-if [ $DISTO != "Ubuntu" ] &&
-   [ $DISTO != "Debian" ] &&
-   [ $DISTO != "Raspbian" ] ; then
+if [ "$DISTO" != "Ubuntu" ] &&
+   [ "$DISTO" != "Debian" ] &&
+   [ "$DISTO" != "Raspbian" ] ; then
   echo "This script is only functional for Debian, Ubuntu and Raspbian"
   exit 1
 fi
@@ -123,11 +123,11 @@ if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "20" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
 elif [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "17" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
-elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
+elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "10" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
 elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "9" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadbclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadbclient-dev"; fi
-elif [ $DISTO = "Raspbian" ] ; then
+elif [ "$DISTO" = "Raspbian" ] ; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
 else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
