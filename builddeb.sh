@@ -99,7 +99,6 @@ sleep 3
 #########################################################################################
 if !( dpkg-query -W -f'${Status}' "build-essential" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" build-essential"; fi
 if !( dpkg-query -W -f'${Status}' "git" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" git"; fi
-if !( dpkg-query -W -f'${Status}' "pkg-config" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" pkg-config"; fi
 if !( dpkg-query -W -f'${Status}' "autoconf" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" autoconf"; fi
 if !( dpkg-query -W -f'${Status}' "automake" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" automake"; fi
 if !( dpkg-query -W -f'${Status}' "libtool" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libtool"; fi
@@ -133,6 +132,12 @@ else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
 fi
 
+if !( dpkg-query -W -f'${Status}' "pkgconf" 2>/dev/null | grep -q "ok installed"); then
+  if !( dpkg-query -W -f'${Status}' "pkg-config" 2>/dev/null | grep -q "ok installed"); then
+    MISSINGPKG=$MISSINGPKG" pkgconf";
+  fi
+fi
+
 if [ "$MISSINGPKG" = "" ]; then
   echo "All packages installed"
 else
@@ -153,7 +158,9 @@ fi
   if [ -f "src/motion.c" ] ; then
     echo "Using local version"
     mkdir $TEMPDIR/motion
-    cp -r $BASEDIR/* $TEMPDIR/motion/
+    cp -r $BASEDIR/. $TEMPDIR/motion/
+    cd $TEMPDIR/motion
+    make cleanall
   else
     cd $TEMPDIR
     git clone https://github.com/Motion-Project/motion.git
