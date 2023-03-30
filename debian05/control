@@ -19,12 +19,13 @@ Build-Depends: debhelper(>= 13),
  libmicrohttpd-dev,
  gettext,
  zlib1g-dev,
+ libcamera-dev,
 Standards-Version: 4.5.0
 
 Package: motion
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base, adduser
-Recommends:
+Recommends: libcamera-tools
 Suggests:
 Description: Video camera capture program supporting motion detection
  Motion is a program that monitors the video signal from

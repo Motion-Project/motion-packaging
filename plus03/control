@@ -29,7 +29,7 @@ Standards-Version: 4.5.0
 Package: motionplus
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base, adduser
-Recommends:
+Recommends:  libcamera-tools
 Suggests:
 Description: Motionplus is an enhance version of the Motion software that provides a simple
  security camera solution.  Features include

@@ -137,8 +137,9 @@ else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
 fi
 
-if [ $DISTO = "Raspbian" ] ; then
-  if !( dpkg-query -W -f'${Status}' "libcamera-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
+if [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
+  if !( dpkg-query -W -f'${Status}' "libcamera-tools" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-tools"; fi
+  if !( dpkg-query -W -f'${Status}' "libcamera-dev"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
 fi
 
 if [ "$MISSINGPKG" = "" ]; then
@@ -161,7 +162,7 @@ fi
   if [ -f "src/motionplus.cpp" ] ; then
     echo "Using local source code version"
     mkdir $TEMPDIR/motionplus
-    cp -r $BASEDIR/* $TEMPDIR/motionplus/
+    cp -r $BASEDIR/. $TEMPDIR/motionplus/
   else
     cd $TEMPDIR
     git clone https://github.com/Motion-Project/motionplus.git
@@ -220,7 +221,7 @@ fi
     cp -rf $TEMPDIR/motion-packaging/plus02 $TEMPDIR/motionplus/debian
   elif [ "$DISTO" = "Debian" ]; then
     cp -rf $TEMPDIR/motion-packaging/plus02 $TEMPDIR/motionplus/debian
-  elif [ "$DISTO" = "Raspbian" ]; then
+  elif [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
     cp -rf $TEMPDIR/motion-packaging/plus03 $TEMPDIR/motionplus/debian
   else
     echo "Unsupported Distribution: $DISTO"

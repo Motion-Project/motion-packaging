@@ -138,6 +138,11 @@ if !( dpkg-query -W -f'${Status}' "pkgconf" 2>/dev/null | grep -q "ok installed"
   fi
 fi
 
+if [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
+  if !( dpkg-query -W -f'${Status}' "libcamera-tools" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-tools"; fi
+  if !( dpkg-query -W -f'${Status}' "libcamera-dev"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
+fi
+
 if [ "$MISSINGPKG" = "" ]; then
   echo "All packages installed"
 else
