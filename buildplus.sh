@@ -51,6 +51,16 @@ if [ "$DISTO" != "Ubuntu" ] &&
   exit 1
 fi
 
+if [ "$DISTO" = "Raspbian" ]; then
+  USELIBCAM="Y"
+elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
+  USELIBCAM="Y"
+elif [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "22" ]; then
+  USELIBCAM="Y"
+else
+  USELIBCAM="N"
+fi
+
 if [ -z "$DEBUSERNAME" ] || [ -z "$DEBUSEREMAIL" ] || [ -z "$GITBRANCH" ]; then
   echo
   echo "Usage:    buildplus.sh name email <optional branch>"
@@ -137,7 +147,7 @@ else
   if !( dpkg-query -W -f'${Status}' "libmysqlclient-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmysqlclient-dev"; fi
 fi
 
-if [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
+if [ "$USELIBCAM" = "Y" ]; then
   if !( dpkg-query -W -f'${Status}' "libcamera-tools" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-tools"; fi
   if !( dpkg-query -W -f'${Status}' "libcamera-dev"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
 fi
@@ -217,16 +227,10 @@ fi
 
   cd $TEMPDIR/motion-packaging
 
-  if [ "$DISTO" = "Ubuntu" ]; then
+  if [ "$USELIBCAM" = "N" ]; then
     cp -rf $TEMPDIR/motion-packaging/plus02 $TEMPDIR/motionplus/debian
-  elif [ "$DISTO" = "Debian" ]; then
-    cp -rf $TEMPDIR/motion-packaging/plus02 $TEMPDIR/motionplus/debian
-  elif [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
-    cp -rf $TEMPDIR/motion-packaging/plus03 $TEMPDIR/motionplus/debian
   else
-    echo "Unsupported Distribution: $DISTO"
-    rm -rf $TEMPDIR
-    exit 1
+    cp -rf $TEMPDIR/motion-packaging/plus03 $TEMPDIR/motionplus/debian
   fi
 
 #########################################################################################
