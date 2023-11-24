@@ -138,9 +138,10 @@ if !( dpkg-query -W -f'${Status}' "pkgconf" 2>/dev/null | grep -q "ok installed"
   fi
 fi
 
-if [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
+if [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "12" ]; then
   if !( dpkg-query -W -f'${Status}' "libcamera-tools" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-tools"; fi
   if !( dpkg-query -W -f'${Status}' "libcamera-dev"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
+  if !( dpkg-query -W -f'${Status}' "libcamera-v4l2"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
 fi
 
 if [ "$MISSINGPKG" = "" ]; then
@@ -233,7 +234,9 @@ fi
       cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
     fi
   elif [ "$DISTO" = "Debian" ]; then
-    if [ "$DISTROMAJOR" -ge "11" ]; then
+    if [ "$DISTROMAJOR" -ge "12" ]; then
+      cp -rf $TEMPDIR/motion-packaging/debian05 $TEMPDIR/motion/debian
+    elif [ "$DISTROMAJOR" -ge "11" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "10" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian03 $TEMPDIR/motion/debian

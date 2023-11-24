@@ -53,9 +53,7 @@ fi
 
 if [ "$DISTO" = "Raspbian" ]; then
   USELIBCAM="Y"
-elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "11" ]; then
-  USELIBCAM="Y"
-elif [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "22" ]; then
+elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "12" ]; then
   USELIBCAM="Y"
 else
   USELIBCAM="N"
@@ -150,6 +148,7 @@ fi
 if [ "$USELIBCAM" = "Y" ]; then
   if !( dpkg-query -W -f'${Status}' "libcamera-tools" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-tools"; fi
   if !( dpkg-query -W -f'${Status}' "libcamera-dev"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
+  if !( dpkg-query -W -f'${Status}' "libcamera-v4l2"  2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-v4l2"; fi
 fi
 
 if [ "$MISSINGPKG" = "" ]; then

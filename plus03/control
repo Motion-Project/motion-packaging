@@ -23,13 +23,15 @@ Build-Depends: debhelper(>= 13),
  libfftw3-dev,
  zlib1g-dev,
  libcamera-dev,
+ libcamera-v4l2,
  libopencv-dev,
+ libcamera-tools,
 Standards-Version: 4.5.0
 
 Package: motionplus
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base, adduser
-Recommends:  libcamera-tools
+Recommends:
 Suggests:
 Description: Motionplus is an enhance version of the Motion software that provides a simple
  security camera solution.  Features include
@@ -41,5 +43,4 @@ Description: Motionplus is an enhance version of the Motion software that provid
  User customizable web interface.
  Recording of sound from IP camera
  Sound frequency detection and actions for things like smoke/water alarms
- Direct support for libcamera sources 
- And much more
+ Direct support for libcamera sources
