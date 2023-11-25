@@ -246,7 +246,7 @@ fi
       cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
     fi
   elif [ "$DISTO" = "Raspbian" ]; then
-    if [ "$DISTROMAJOR" -ge "11" ] ; then
+    if [ "$DISTROMAJOR" -ge "12" ] ; then
       cp -rf $TEMPDIR/motion-packaging/debian05 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "9" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian

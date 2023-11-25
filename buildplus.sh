@@ -51,7 +51,7 @@ if [ "$DISTO" != "Ubuntu" ] &&
   exit 1
 fi
 
-if [ "$DISTO" = "Raspbian" ]; then
+if [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "12" ]; then
   USELIBCAM="Y"
 elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "12" ]; then
   USELIBCAM="Y"
