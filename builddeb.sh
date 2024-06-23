@@ -291,11 +291,7 @@ fi
   rm -rf $TEMPDIR
   for FILE in $BASEDIR/motion_$VERSION*; do
     NEWNAME="_${FILE##*/}"
-    if [ "$DISTO" = "Raspbian" ] ; then
-      NEWNAME=pi_$DISTRONAME$NEWNAME
-    else
-      NEWNAME=$DISTRONAME$NEWNAME
-    fi
+    NEWNAME=$DISTRONAME$NEWNAME
     mv "$FILE" "$NEWNAME"
   done
 #########################################################################################
