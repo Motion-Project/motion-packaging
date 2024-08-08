@@ -141,7 +141,7 @@ fi
 if [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "12" ]; then
   if !( dpkg-query -W -f'${Status}' "libcamera-tools" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-tools"; fi
   if !( dpkg-query -W -f'${Status}' "libcamera-dev"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
-  if !( dpkg-query -W -f'${Status}' "libcamera-v4l2"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
+  if !( dpkg-query -W -f'${Status}' "libcamera-v4l2"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-v4l2"; fi
 fi
 
 if [ "$MISSINGPKG" = "" ]; then
