@@ -1,0 +1,9 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: motionplus
+Source: https://github.com/Motion-Project/motionplus
+License: GPL-3+
+
+Files: *
+Copyright: 2020-2024 motionplus authors
+License: GPL-3+
+
