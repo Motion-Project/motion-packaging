@@ -34,6 +34,7 @@ DISTROVERSION=$(lsb_release -rs)
 DISTROMAJOR=`echo $DISTROVERSION | cut -d. -f1`
 DISTRONAME=$(lsb_release -cs)
 PKGARCH=$(dpkg --print-architecture)
+TSTDT="$(date '+%Y%m')"
 
 ##############################################################################################
 #  0.  Validate distribution, user parameters and packages
@@ -227,9 +228,17 @@ fi
   cd $TEMPDIR/motion-packaging
 
   if [ "$USELIBCAM" = "N" ]; then
-    cp -rf $TEMPDIR/motion-packaging/plus02 $TEMPDIR/motionplus/debian
+    if [ "$TSTDT" -lt "202411" ] && [ "$GITBRANCH" == "master" ] ; then
+      cp -rf $TEMPDIR/motion-packaging/plus02 $TEMPDIR/motionplus/debian
+    else
+      cp -rf $TEMPDIR/motion-packaging/plus04 $TEMPDIR/motionplus/debian
+    fi
   else
-    cp -rf $TEMPDIR/motion-packaging/plus03 $TEMPDIR/motionplus/debian
+    if [ "$TSTDT" -lt "202411" ] && [ "$GITBRANCH" == "master" ] ; then
+      cp -rf $TEMPDIR/motion-packaging/plus03 $TEMPDIR/motionplus/debian
+    else
+      cp -rf $TEMPDIR/motion-packaging/plus05 $TEMPDIR/motionplus/debian
+    fi
   fi
 
 #########################################################################################

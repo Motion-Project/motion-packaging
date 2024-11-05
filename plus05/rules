@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+# export DH_VERBOSE=1
+
+include /usr/share/dpkg/default.mk
+
+LIBDIR_MULTIARCH = /usr/lib/$(DEB_HOST_MULTIARCH)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --with autoreconf
+
