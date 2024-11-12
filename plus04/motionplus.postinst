@@ -42,8 +42,6 @@ add_dir_if_missing() {
     chown -R motion:motion /var/lib/motionplus
     chmod g+s /var/lib/motionplus
 
-    @cp -n /var/lib/motionplus/motionplus-dist.conf /var/lib/motionplus/motionplus.conf
-    @cp -n /var/lib/motionplus/camera1-dist.conf /var/lib/motionplus/camera1.conf
 }
 
 add_group_if_missing

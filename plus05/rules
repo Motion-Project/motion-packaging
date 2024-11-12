@@ -9,3 +9,8 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 %:
 	dh $@ --with autoreconf
 
+override_dh_auto_install:
+	dh_auto_install
+	@cp -n /var/lib/motionplus/motionplus-dist.conf /var/lib/motionplus/motionplus.conf
+	@cp -n /var/lib/motionplus/camera1-dist.conf /var/lib/motionplus/camera1.conf
+
