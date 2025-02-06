@@ -27,12 +27,3 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base, adduser
 Recommends:
 Suggests:
 Description: Video camera capture program supporting motion detection
- Motion is a program that monitors the video signal from
- one or more cameras and is able to detect if a significant
- part of the picture has changed. Or in other words, it can
- detect motion.
- .
- The output from motion can be image files, videos or execution
- of user provided scripts.
- .
- Also, Motion has its own web server to provide output via a browser.

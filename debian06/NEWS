@@ -1,0 +1,7 @@
+motion (4.3.2-1) unstable; urgency=medium
+
+  Migrate to systemd instead of initscript. This no longer honours
+  /etc/default/motion, so if you had disabled the service previously then you
+  should run `systemctl disable motion` after upgrading to this version.
+
+ -- Ximin Luo <infinity0@debian.org>  Sun, 15 Nov 2020 20:07:37 +0000

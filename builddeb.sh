@@ -51,6 +51,14 @@ if [ "$DISTO" != "Ubuntu" ] &&
   exit 1
 fi
 
+if [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "12" ]; then
+  USELIBCAM="Y"
+elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "12" ]; then
+  USELIBCAM="Y"
+else
+  USELIBCAM="N"
+fi
+
 if [ -z "$DEBUSERNAME" ] || [ -z "$DEBUSEREMAIL" ] || [ -z "$GITBRANCH" ]; then
   echo
   echo "Usage:    builddeb.sh name email <optional branch>"
@@ -117,6 +125,10 @@ if !( dpkg-query -W -f'${Status}' "libwebp-dev" 2>/dev/null | grep -q "ok instal
 if !( dpkg-query -W -f'${Status}' "libmicrohttpd-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmicrohttpd-dev"; fi
 if !( dpkg-query -W -f'${Status}' "gettext" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" gettext"; fi
 if !( dpkg-query -W -f'${Status}' "fakeroot" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" fakeroot"; fi
+if !( dpkg-query -W -f'${Status}' "libasound2-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libasound2-dev"; fi
+if !( dpkg-query -W -f'${Status}' "libpulse-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libpulse-dev"; fi
+if !( dpkg-query -W -f'${Status}' "libfftw3-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libfftw3-dev"; fi
+if !( dpkg-query -W -f'${Status}' "libopencv-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libopencv-dev"; fi
 
 if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "20" ]; then
   if !( dpkg-query -W -f'${Status}' "libmariadb-dev" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libmariadb-dev"; fi
@@ -138,10 +150,10 @@ if !( dpkg-query -W -f'${Status}' "pkgconf" 2>/dev/null | grep -q "ok installed"
   fi
 fi
 
-if [ "$DISTO" != "Ubuntu" ] && [ "$DISTROMAJOR" -ge "12" ]; then
+if [ "$USELIBCAM" = "Y" ]; then
   if !( dpkg-query -W -f'${Status}' "libcamera-tools" 2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-tools"; fi
   if !( dpkg-query -W -f'${Status}' "libcamera-dev"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-dev"; fi
-  if !( dpkg-query -W -f'${Status}' "libcamera-v4l2"   2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-v4l2"; fi
+  if !( dpkg-query -W -f'${Status}' "libcamera-v4l2"  2>/dev/null | grep -q "ok installed"); then MISSINGPKG=$MISSINGPKG" libcamera-v4l2"; fi
 fi
 
 if [ "$MISSINGPKG" = "" ]; then
@@ -209,7 +221,9 @@ fi
   else
     VERSION=$(scripts/version.sh)
   fi
+  VER=$(echo $VERSION | cut -c 1)
   echo "Version: $VERSION"
+
   TARNAME=motion_$VERSION.orig.tar.gz
 
   tar --exclude=".*" -zcf $TARNAME *
@@ -223,38 +237,42 @@ fi
 #########################################################################################
 
   cd $TEMPDIR/motion-packaging
-  if [ "$DISTO" = "Ubuntu" ]; then
+  if [ "$DISTO" = "Ubuntu" ] && [ "$DISTROMAJOR" -ge "20" ] && [ "$VER" -le "4" ]; then
     if [ "$DISTROMAJOR" -ge "22" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "20" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian03 $TEMPDIR/motion/debian
-    elif [ "$DISTROMAJOR" -ge "17" ]; then
-      cp -rf $TEMPDIR/motion-packaging/debian02 $TEMPDIR/motion/debian
     else
-      cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
+      echo "Unsupported Distribution and version : $DISTO $DISTROMAJOR"
+      rm -rf $TEMPDIR
+      exit 1
     fi
-  elif [ "$DISTO" = "Debian" ]; then
+  elif [ "$DISTO" = "Debian" ] && [ "$DISTROMAJOR" -ge "11" ] && [ "$VER" -le "4" ]; then
     if [ "$DISTROMAJOR" -ge "12" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian05 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "11" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
-    elif [ "$DISTROMAJOR" -ge "10" ]; then
-      cp -rf $TEMPDIR/motion-packaging/debian03 $TEMPDIR/motion/debian
-    elif [ "$DISTROMAJOR" -ge "9" ]; then
-      cp -rf $TEMPDIR/motion-packaging/debian02 $TEMPDIR/motion/debian
     else
-      cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
+      echo "Unsupported Distribution and version : $DISTO $DISTROMAJOR"
+      rm -rf $TEMPDIR
+      exit 1
     fi
-  elif [ "$DISTO" = "Raspbian" ]; then
-    if [ "$DISTROMAJOR" -ge "12" ] ; then
+  elif [ "$DISTO" = "Raspbian" ] && [ "$DISTROMAJOR" -ge "11" ] && [ "$VER" -le "4" ]; then
+    if [ "$DISTROMAJOR" -ge "12" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian05 $TEMPDIR/motion/debian
     elif [ "$DISTROMAJOR" -ge "9" ]; then
       cp -rf $TEMPDIR/motion-packaging/debian04 $TEMPDIR/motion/debian
     else
-      cp -rf $TEMPDIR/motion-packaging/debian01 $TEMPDIR/motion/debian
+      echo "Unsupported Distribution and version : $DISTO $DISTROMAJOR"
+      rm -rf $TEMPDIR
+      exit 1
     fi
+  elif [ "$USELIBCAM" = "N" ] && [ "$VER" -ge "5" ]; then
+    cp -rf $TEMPDIR/motion-packaging/debian06 $TEMPDIR/motion/debian
+  elif [ "$USELIBCAM" = "Y" ] && [ "$VER" -ge "5" ]; then
+    cp -rf $TEMPDIR/motion-packaging/debian07 $TEMPDIR/motion/debian
   else
-    echo "Unsupported Distribution: $DISTO"
+    echo "Unsupported Distribution and version : $DISTO $DISTROMAJOR"
     rm -rf $TEMPDIR
     exit 1
   fi

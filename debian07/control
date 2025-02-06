@@ -18,7 +18,11 @@ Build-Depends: debhelper(>= 13),
  libsqlite3-dev,
  libmicrohttpd-dev,
  gettext,
+ libpulse-dev,
+ libasound2-dev,
+ libfftw3-dev,
  zlib1g-dev,
+ libopencv-dev,
  libcamera-dev,
  libcamera-v4l2,
  libcamera-tools,
@@ -30,3 +34,4 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base, adduser
 Recommends:
 Suggests:
 Description: Video camera capture program supporting motion detection
+

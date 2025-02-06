@@ -1,0 +1,11 @@
+Template: motion/moved_conf_dir
+Type: note
+_Description: Location of Motion's config files has changed
+ The default location of Motion's configuration files has moved from /etc/motion
+ to /var/lib/motion/. So if you already have a motion.conf in /etc/motion from a
+ previous installation of Motion, you should move this to /var/lib/motion/ in
+ order for it to take effect whenever Motion is used.
+ .
+ The same thing goes for any camera*.conf files you may have. You should
+ move these to /var/lib/motion/ as well (in this case, also remember to update
+ the path to the camera*.conf files inside motion.conf).
